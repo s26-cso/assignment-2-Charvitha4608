@@ -11,14 +11,14 @@ int main() {
     while (scanf("%s %d %d", op, &num1, &num2) == 3) {
 
         char libname[20];
-        sprintf(libname, "lib%s.so", op);
+        sprintf(libname, "./lib%s.so", op);
 
         // load library
         void *handle = dlopen(libname, RTLD_LAZY);
 
         // if library not found 
         if (handle == NULL) {
-            printf("Can't load %s\n", libname);
+            fprintf(stderr,"cant load %s\n",libname);
             continue;
         }
 
@@ -26,10 +26,10 @@ int main() {
         int (* func)(int , int);
 
         // get function address from library using op name
-        func = (int (*)(int, int)) dlsym(handle, op);
+        *(void **)(&func)= dlsym(handle, op);
 
         if (func == NULL) {
-            printf("Can't find function %s\n", op);
+            fprintf(stderr,"Can't find function %s\n", op);
             dlclose(handle); // to remove from memory
             continue;
         }
